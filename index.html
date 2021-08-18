@@ -15,7 +15,16 @@
         <!-- <ul>
             <todo-item v-for="item in list" :title="item.title" :del="item.del"></todo-item>
         </ul> -->
-        <todo-list></todo-list>
+        <todo-list>
+            <todo-item @delete="handleDelete" v-for="item in list" :title="item.title" :del="item.del">                                
+                <template v-slot:pre-icon="{value}">
+                    <span >PREICON {{value}}</span>               
+                </template>
+                <template v-slot:post-icon>
+                    <span >POSTICON</span>
+                </template>
+            </todo-item>
+        </todo-list>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script>
@@ -29,13 +38,17 @@
             },
             template: `
             <li>
+                <slot name="pre-icon" :value="value"></slot>
                 <span v-if="!del">{{title}}</span>
                 <span v-else style="text-decoration: line-through">{{title}}</span>
+                <slot name="post-icon"></slot>
                 <button v-show="!del" @click="handleClick">Delete</button>
             </li>
             `,
             data: function () {
-                return {}
+                return {
+                    value: Math.random()
+                }
             },
             methods: {
                 handleClick() {
@@ -48,12 +61,23 @@
         Vue.component("todo-list", {
             template: `
             <ul>
-                <todo-item @delete="handleDelete" v-for="item in list" :title="item.title" :del="item.del"></todo-item>
+                <slot></slot>
             </ul>
             `,
             data: function () {
                 return {
-                    list: [
+                }
+            },
+            methods: {
+
+            }
+
+        })
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                message: "hello world",
+                list: [
                         {
                             title: 'course 1',
                             del: false
@@ -63,20 +87,11 @@
                             del: true
                         }
                     ]
-                }
             },
             methods: {
                 handleDelete (val){
                     console.log('handle delete', val)
                 }
-            }
-
-        })
-        var vm = new Vue({
-            el: "#app",
-            data: {
-                message: "hello world",
-
             }
         })
     </script>
